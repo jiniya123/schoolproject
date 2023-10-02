@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Page</title>
+    {% load static %}
+    <script src="{% static 'your_app/dynamic_dropdown.js' %}"></script>
+    <style>
+        /* Add your modal styles here */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            width: 50%;
+            margin: 100px auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+
+            background-color:pink;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <h2>Form Page</h2>
+
+    <form id="myForm" method="post" action="{% url 'school:form_page' %}">
+        {% csrf_token %}
+
+        <!-- Name Field -->
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <!-- DOB Field (Date format) -->
+        <label for="dob">DOB:</label>
+        <input type="date" id="dob" name="dob" required><br><br>
+
+        <!-- Age Field -->
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required><br><br>
+
+        <!-- Gender Field -->
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+            <option value="O">Other</option>
+        </select><br><br>
+
+        <!-- Phone Number Field -->
+        <label for="phone_number">Phone Number:</label>
+        <input type="tel" id="phone_number" name="phone_number" required><br><br>
+
+        <!-- Email Field -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <!-- Address Field -->
+        <label for="address">Address:</label>
+        <textarea id="address" name="address" required></textarea><br><br>
+
+        <!-- ... Your form fields ... -->
+
+        <!-- Department Field (Dropdown) -->
+        <label for="department">Department:</label>
+        <select id="department" name="department" required>
+            <option value="" disabled selected>Select Department</option>
+            {% for department in departments %}
+                <option value="{{ department.id }}">{{ department.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Courses Field (Dropdown, dependent on Department) -->
+        <!-- Courses Field (Dropdown, dependent on Department) -->
+<label for="courses">Courses:</label>
+<select id="courses" name="courses" required>
+    <option value="" disabled selected>Select Course</option>
+    {% for course in courses %}
+        <option value="{{ course.id }}" data-department="{{ course.department.id }}">{{ course.name }}</option>
+    {% endfor %}
+</select><br><br>
+
+<script>
+    const form = document.getElementById('myForm');
+    const departmentDropdown = document.getElementById('department');
+    const coursesDropdown = document.getElementById('courses');
+
+    // Function to filter courses based on the selected department
+    function filterCourses() {
+        const selectedDepartmentId = departmentDropdown.value;
+
+        // Clear previous options
+        coursesDropdown.innerHTML = '<option value="" disabled selected>Select Course</option>';
+
+        // If "Select Department First" is selected, disable the "Courses" dropdown
+        if (!selectedDepartmentId) {
+            coursesDropdown.disabled = true;
+            return;
+        }
+
+        // Filter courses based on the selected department
+        {% for course in courses %}
+            if ("{{ course.department.id }}" === selectedDepartmentId) {
+                const option = document.createElement('option');
+                option.value = "{{ course.id }}";
+                option.textContent = "{{ course.name }}";
+                coursesDropdown.appendChild(option);
+            }
+        {% endfor %}
+
+        // Enable the "Courses" dropdown
+        coursesDropdown.disabled = false;
+    }
+
+    // Event listener to trigger course filtering when department changes
+    departmentDropdown.addEventListener('change', filterCourses);
+
+    // Initial state: Disable the "Courses" dropdown
+    coursesDropdown.disabled = true;
+</script>
+
+        <!-- Purpose Field (Dropdown) -->
+        <!-- Purpose Field (Dropdown) -->
+<!-- Purpose Field (Dropdown) -->
+<label for="purpose">Purpose:</label>
+<select id="purpose" name="purpose" required>
+    <option value="Place order">Place order</option>
+    <option value="For enquiry">For enquiry</option>
+    <option value="Return">Return</option>
+</select><br><br>
+
+<!-- JavaScript to handle the purpose dropdown -->
+        <!-- Materials Provide Field (Checkboxes) -->
+        <label>Materials Provide:</label><br>
+        {% for material in materials %}
+            <input type="checkbox" id="material_{{ material.id }}" name="materials_provide" value="{{ material.id }}">
+            <label for="material_{{ material.id }}">{{ material.name }}</label><br>
+        {% endfor %}
+        <!-- ... Checkbox options ... -->
+
+        <!-- Submit Button -->
+<button type="submit" id="submitButton">Submit</button>
+    </form>
+
+    <form method="post" action="{% url 'school:logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+
+    <!-- Modal for displaying messages -->
+    <!-- Modal for displaying messages -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <p id="messageText"></p>
+        <button id="goToHomeButton">Go to Home</button>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('myModal');
+    const messageText = document.getElementById('messageText');
+    const goToHomeButton = document.getElementById('goToHomeButton');
+    const submitButton = document.getElementById('submitButton');
+
+    submitButton.addEventListener('click', function () {
+    event.preventDefault();
+        // Perform form validation here if needed
+        const selectedPurpose = document.getElementById('purpose').value;
+
+        // Set the message and action based on the selected purpose
+        let message = '';
+        let action = '';
+        if (selectedPurpose === 'Place order') {
+            message = 'Order confirmed.';
+            action = 'Go to Home';
+        } else if (selectedPurpose === 'For enquiry') {
+            message = 'Our team will contact you soon.';
+            action = 'Go to Home';
+        } else if (selectedPurpose === 'Return') {
+            message = 'Our department will contact you soon.';
+            action = 'Go to Home';
+        }
+
+        // Display the modal with the message and action
+        messageText.textContent = message;
+        goToHomeButton.textContent = action;
+        modal.style.display = 'block';
+    });
+
+    // Close the modal when the "Go to Home" button is clicked
+    goToHomeButton.addEventListener('click', function () {
+        window.location.href = '{% url 'school:home' %}';
+    });
+</script>
+
+</body>
+</html>

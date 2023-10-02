@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>School Gallery</title>
+    <style>
+        body {
+
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f2f2f2;
+            background-image: url('https://media.istockphoto.com/photos/empty-meeting-or-conference-room-blurred-for-background-picture-id497540360?k=6&m=497540360&s=612x612&w=0&h=YYEjg2h_8eEH6ur-AR2RsUWE3Rd0VDzRiHTToXihUEw=');
+            background-size: cover;
+            background-position: center;
+        }
+        h2 {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h2>Welcome to School Gallery</h2>
+    <form method="post" action="{% url 'school:form_page' %}">
+        {% csrf_token %}
+        <button type="submit">Click here to proceed</button>
+    </form>
+
+
+</body>
+</html>
+
+
+
+
+
